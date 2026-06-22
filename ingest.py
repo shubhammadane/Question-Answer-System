@@ -25,7 +25,7 @@ embeddings = HuggingFaceEmbeddings(
     model_name="BAAI/bge-small-en-v1.5"
 )
 
-print("Creating Vector Database...")
+print("Creating Vector Database....")
 
 db = FAISS.from_documents(
     chunks,
