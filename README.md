@@ -37,6 +37,7 @@ Question-Answer System/
 │
 └── README.md
 ```
+<img width="1919" height="1058" alt="image" src="https://github.com/user-attachments/assets/374f634b-8b85-4a67-b499-f9b5b6571726" />
 
 ---
 
