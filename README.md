@@ -1,53 +1,65 @@
-# Local Multilingual RAG Chatbot
+# 📚 Local Multilingual Document Question-Answer System
 
 ## Overview
 
-This project is a Local Retrieval-Augmented Generation (RAG) Chatbot that answers questions from uploaded documents.
+This project is a local document-based Question Answering (QA) system built using Retrieval-Augmented Generation (RAG) concepts.
 
-The chatbot supports multiple Indian languages such as:
+The system reads a PDF document, converts the content into vector embeddings, stores them in a FAISS vector database, and retrieves the most relevant information when a user asks a question.
 
-* English
-* Hindi
-* Marathi
-* Tamil
-* Telugu
-* Gujarati
-* Bengali
-* Punjabi
-
-The entire system runs locally on your machine without using any cloud APIs.
+Currently, the system performs semantic document retrieval. Future versions can integrate local Large Language Models (LLMs) such as Llama 3, Gemma, or Mistral through Ollama to generate natural-language answers.
 
 ---
 
 ## Features
 
-* Document-based Question Answering
-* PDF Document Support
-* Multilingual Query Support
+* PDF Document Processing
+* Semantic Search
 * FAISS Vector Database
-* Local Embedding Model
+* Local Execution (No OpenAI API Required)
+* Multilingual Query Support
+* Fast Document Retrieval
+* Extensible RAG Architecture
 * Offline Processing
-* Command Line Interface
-* Easy to Extend with Streamlit UI
 
 ---
 
 ## Project Structure
 
 ```text
-chatbot/
+Question-Answer System/
 │
-├── document.pdf
+├── Soybean.pdf
 ├── ingest.py
 ├── chatbot.py
 ├── faiss_db/
-├── requirements.txt
+│   ├── index.faiss
+│   └── index.pkl
+│
 └── README.md
 ```
 
 ---
 
+## Technology Stack
+
+* Python
+* LangChain
+* FAISS
+* Hugging Face Embeddings
+* Sentence Transformers
+* PyPDF
+* Ollama (Future Integration)
+
+---
+
 ## Installation
+
+### Clone Project
+
+```bash
+git clone <repository-url>
+cd Question-Answer-System
+```
 
 ### Create Virtual Environment
 
@@ -63,7 +75,7 @@ Windows:
 venv\Scripts\activate
 ```
 
-Linux/Mac:
+Linux / Mac:
 
 ```bash
 source venv/bin/activate
@@ -72,16 +84,10 @@ source venv/bin/activate
 ### Install Dependencies
 
 ```bash
-pip install -r requirements.txt
-```
-
----
-
-## Required Packages
-
-```bash
 pip install langchain
 pip install langchain-community
+pip install langchain-text-splitters
+pip install langchain-huggingface
 pip install sentence-transformers
 pip install faiss-cpu
 pip install pypdf
@@ -89,7 +95,7 @@ pip install pypdf
 
 ---
 
-## Step 1: Load and Index Document
+## Step 1: Create Vector Database
 
 Run:
 
@@ -97,16 +103,29 @@ Run:
 python ingest.py
 ```
 
-This will:
+This process:
 
-1. Load the PDF
-2. Split text into chunks
-3. Generate embeddings
-4. Store vectors in FAISS
+1. Loads the PDF document
+2. Splits text into chunks
+3. Creates embeddings
+4. Builds a FAISS vector database
+5. Saves the database locally
+
+Expected Output:
+
+```text
+Loading PDF...
+Loaded 44 pages
+Splitting document...
+Created 77 chunks
+Creating FAISS vector database...
+Saving database...
+FAISS Database Created Successfully
+```
 
 ---
 
-## Step 2: Start Chatbot
+## Step 2: Start Question Answering System
 
 Run:
 
@@ -114,80 +133,97 @@ Run:
 python chatbot.py
 ```
 
-Example:
+Expected Output:
 
 ```text
-Question: What is GAN?
-
-Answer:
-GAN stands for Generative Adversarial Network...
+Chatbot Ready!
+Type 'exit' to quit
 ```
 
 ---
 
-## Multilingual Examples
+## Example Questions
+
+### English
+
+```text
+What is soybean?
+
+What is the ideal soil pH for soybean?
+
+What are the top management tips for soybean production?
+```
 
 ### Marathi
 
 ```text
-GAN म्हणजे काय?
+सोयाबीन म्हणजे काय?
+
+सोयाबीनसाठी योग्य pH किती असावा?
+
+सोयाबीन उत्पादनासाठी सर्वोत्तम व्यवस्थापन टिप्स कोणत्या आहेत?
 ```
 
 ### Hindi
 
 ```text
-GAN क्या है?
-```
+सोयाबीन क्या है?
 
-### English
+सोयाबीन के लिए उपयुक्त pH कितना होना चाहिए?
 
-```text
-What is GAN?
+सोयाबीन उत्पादन के लिए प्रमुख प्रबंधन सुझाव क्या हैं?
 ```
 
 ---
 
-## Embedding Model
-
-Recommended Model:
+## Current Architecture
 
 ```text
-BAAI/bge-m3
+PDF Document
+      │
+      ▼
+Document Loader
+      │
+      ▼
+Text Chunking
+      │
+      ▼
+Embeddings
+      │
+      ▼
+FAISS Vector Database
+      │
+      ▼
+Retriever
+      │
+      ▼
+Relevant Document Chunks
 ```
-
-Advantages:
-
-* Multilingual Support
-* Fast Retrieval
-* High Accuracy
-* Works with Indian Languages
 
 ---
 
 ## Future Enhancements
 
+* RAG Pipeline
+* Ollama Integration
+* Llama 3 Support
+* Gemma Support
+* Mistral Support
 * Streamlit Web UI
 * Voice Input
 * Chat History
+* Source Citations
 * Multi-PDF Support
-* Hybrid Search
-* OCR Support
-* Local LLM Integration using Ollama
+* Agricultural Advisory Chatbot
 
 ---
 
-## Technology Stack
+## Author
 
-* Python
-* LangChain
-* FAISS
-* Sentence Transformers
-* BGE-M3 Embeddings
-* Ollama (Optional)
-* Streamlit (Future)
+Developed as a learning project for Natural Language Processing (NLP), Information Retrieval, and Retrieval-Augmented Generation (RAG) systems.
 
 ---
 
 ## License
 
-This project is for educational and research purposes.
+This project is intended for educational and research purposes.
