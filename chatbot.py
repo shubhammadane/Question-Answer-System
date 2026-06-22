@@ -1,35 +1,64 @@
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaLLM
 
-DB_FOLDER = "faiss_db"
-
-print("Loading embeddings...")
+print("Loading Embeddings...")
 
 embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-m3"
+    model_name="BAAI/bge-small-en-v1.5"
 )
 
-print("Loading vector database...")
+print("Loading Vector Database...")
 
 db = FAISS.load_local(
-    DB_FOLDER,
+    "faiss_db",
     embeddings,
     allow_dangerous_deserialization=True
 )
 
-print("Chatbot Ready!")
-print("Type 'exit' to quit")
+retriever = db.as_retriever(search_kwargs={"k": 3})
+
+print("Loading Llama3...")
+
+llm = OllamaLLM(model="llama3")
+
+print("\nChatbot Ready!")
+print("Type 'exit' to quit\n")
 
 while True:
-    query = input("\nQuestion: ")
 
-    if query.lower() == "exit":
+    question = input("Question: ")
+
+    if question.lower() == "exit":
         break
 
-    docs = db.similarity_search(query, k=3)
+    docs = retriever.invoke(question)
 
-    print("\nAnswer:\n")
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
 
-    for i, doc in enumerate(docs, start=1):
-        print(f"\n--- Result {i} ---")
-        print(doc.page_content[:1000])
+    prompt = f"""
+You are a helpful document assistant.
+
+Rules:
+1. Answer ONLY from the provided context.
+2. If answer is not available, say:
+   "Information not found in document."
+3. Answer in the SAME language as the user question.
+4. Keep answers concise and clear.
+
+Question:
+{question}
+
+Context:
+{context}
+
+Answer:
+"""
+
+    response = llm.invoke(prompt)
+
+    print("\nAnswer:")
+    print(response)
+    print("\n" + "=" * 60 + "\n")

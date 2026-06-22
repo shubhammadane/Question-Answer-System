@@ -1,49 +1,37 @@
-import os
-
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 PDF_FILE = "Soybean.pdf"
-DB_FOLDER = "faiss_db"
 
 print("Loading PDF...")
 
 loader = PyPDFLoader(PDF_FILE)
-documents = loader.load()
+docs = loader.load()
 
-print(f"Loaded {len(documents)} pages")
+print(f"Loaded {len(docs)} pages")
 
-print("Splitting document...")
-
-text_splitter = RecursiveCharacterTextSplitter(
+splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000,
     chunk_overlap=200
 )
 
-chunks = text_splitter.split_documents(documents)
+chunks = splitter.split_documents(docs)
 
 print(f"Created {len(chunks)} chunks")
 
-print("Loading embedding model...")
-
 embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-m3"
+    model_name="BAAI/bge-small-en-v1.5"
 )
 
-print("Creating FAISS vector database...")
+print("Creating Vector Database...")
 
-vector_db = FAISS.from_documents(
-    documents=chunks,
-    embedding=embeddings
+db = FAISS.from_documents(
+    chunks,
+    embeddings
 )
 
-print("Saving database...")
+db.save_local("faiss_db")
 
-vector_db.save_local(DB_FOLDER)
-
-print("===================================")
-print("FAISS Database Created Successfully")
-print(f"Saved in: {DB_FOLDER}")
-print("===================================")
+print("FAISS Database Created Successfully!")
